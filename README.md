@@ -13,6 +13,7 @@ class Game < ActiveRecord::Base
   after_initialize :automatically_log_changes
 end
 
+<pre><code>
 Then anytime that object is modified, a new entry in the change_logs table will be added:
 > game.change_logs
  => []
@@ -21,6 +22,7 @@ Then anytime that object is modified, a new entry in the change_logs table will 
 > game.change_logs
  => [#<ChangeLog id: 442, target_id: 65, target_type: "Game", changes_logged: {"name"=>["Old Name", "Wombats Rule"]}, comments: nil, user_id: 68, created_at: "2011-11-16 00:01:04">]
 >
+</code></pre>
 
 ASSUMPTIONS
 ===========
@@ -31,6 +33,7 @@ TODO
 ====
 
 Add migration for creation of the change_logs table. For now, here is the schema:
+<pre><code>
 mysql> desc change_logs;
 +----------------+--------------+------+-----+---------+----------------+
 | Field          | Type         | Null | Key | Default | Extra          |
@@ -43,3 +46,4 @@ mysql> desc change_logs;
 | user_id        | int(11)      | YES  |     | NULL    |                |
 | created_at     | datetime     | YES  |     | NULL    |                |
 +----------------+--------------+------+-----+---------+----------------+
+</code></pre>
