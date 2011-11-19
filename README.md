@@ -13,8 +13,8 @@ class Game < ActiveRecord::Base
   after_initialize :automatically_log_changes
 end
 
-<pre><code>
 Then anytime that object is modified, a new entry in the change_logs table will be added:
+<pre><code>
 > game.change_logs
  => []
 > game.update_attribute(:name, 'Wombats Rule')
