@@ -4,9 +4,11 @@ require 'active_record'
 
 require 'changes_are_logged'
 
-require 'test_data'
+require 'support/database_helpers' #test_data'
 
 RSpec.configure do |config|
+  config.include ChangesAreLogged::Spec::DatabaseHelpers
+
   config.before do
     ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => ':memory:')
     setup_db
