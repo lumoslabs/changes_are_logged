@@ -11,24 +11,11 @@ class ChangeLog < ActiveRecord::Base
 
   def pretty_changes(html = false)
     change_string = ""
-    if changes_logged
+    if has_changes?
       changes_logged.each do |k,v|
         unless IGNORED_KEYS.include?(k)
-          from = if v[0].nil?
-            "(nil)"
-          elsif v[0] == ""
-            "(empty)"
-          else
-            v[0].pretty_inspect
-          end
-
-          to = if v[1].nil?
-            "(nil)"
-          elsif v[1] == ""
-            "(empty)"
-          else
-            v[1].pretty_inspect
-          end
+          from = self.class.pretty_value(v[0])
+          to = self.class.pretty_value(v[1])
 
           change_string << (html ? "&bull;&nbsp;" : "- ")
           change_string << (html ? "<i>#{k}</i>" : k)
@@ -41,4 +28,29 @@ class ChangeLog < ActiveRecord::Base
       "No changes!"
     end
   end
+  
+  def has_changes?
+    changes_logged && changes_logged.any?
+  end
+  
+  def pretty_change_hashes
+    changes_logged.map do |k, (from, to)|
+      {
+        :key  => k, 
+        :from => self.class.pretty_value(from), 
+        :to   => self.class.pretty_value(to)
+      }
+    end
+  end
+  
+  def self.pretty_value(v)
+    if v.nil?
+      "(nil)"
+    elsif v == ""
+      "(empty)"
+    else
+      v.pretty_inspect
+    end
+  end
+  
 end
