@@ -9,6 +9,8 @@ class ChangeLog < ActiveRecord::Base
   scope :for_target_id, lambda {|target_id| {:conditions => {:target_id => target_id}}}
   scope :for_target_type, lambda {|target_type| {:conditions => {:target_type => target_type}}}
 
+  validates :target, :presence => true
+
   def pretty_changes(html = false)
     change_string = ""
     if has_changes?
