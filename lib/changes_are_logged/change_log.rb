@@ -32,6 +32,7 @@ class ChangeLog < ActiveRecord::Base
 
   # FIXME too complected with lumos_rails
   def user
+    return nil unless user_id
     user_is_staff ? StaffUser.find(user_id) : User.find(user_id)
   end
   
