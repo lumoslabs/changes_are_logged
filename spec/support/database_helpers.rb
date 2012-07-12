@@ -10,6 +10,7 @@ module ChangesAreLogged
             t.column :changes_logged, :text
             t.column :comments, :text
             t.column :user_id, :integer
+            t.column :user_is_staff, :boolean
             t.datetime :created_at
           end
 

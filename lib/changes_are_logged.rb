@@ -6,8 +6,13 @@ module ChangesAreLogged
     def log_it
       return unless @log_changes
 
+      # FIXME too complected with lumos_rails
       unless @modifying_user_id
-        @modifying_user_id = if defined?(current_user) && current_user && current_user.respond_to?(:id)
+        @modifying_user_id = if defined?(StaffUser) && staff_user = StaffUser.current
+          @modifying_user_is_staff = true
+          staff_user.id
+        end
+        @modifying_user_id ||= if defined?(current_user) && current_user && current_user.respond_to?(:id)
           current_user.id
         end
       end
@@ -24,7 +29,12 @@ module ChangesAreLogged
     end
 
     def save_change_log
-      self.change_logs << ChangeLog.new(:changes_logged => @changes_logged, :user_id => @modifying_user_id, :comments => @change_comments)
+      self.change_logs << ChangeLog.new(
+        :changes_logged => @changes_logged, 
+        :user_id        => @modifying_user_id, 
+        :comments       => @change_comments,
+        :user_is_staff  => @modifying_user_is_staff
+      )
       @change_comments = nil
     end
 

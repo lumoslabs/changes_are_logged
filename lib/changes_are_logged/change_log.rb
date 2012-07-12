@@ -2,7 +2,6 @@ class ChangeLog < ActiveRecord::Base
 
   IGNORED_KEYS = ["updated_at"]
 
-  belongs_to :user
   belongs_to :target, :polymorphic => true
   serialize :changes_logged
 
@@ -29,6 +28,11 @@ class ChangeLog < ActiveRecord::Base
     else
       "No changes!"
     end
+  end
+
+  # FIXME too complected with lumos_rails
+  def user
+    user_is_staff ? StaffUser.find(user_id) : User.find(user_id)
   end
   
   def has_changes?
