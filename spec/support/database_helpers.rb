@@ -20,6 +20,13 @@ module ChangesAreLogged
             t.column :created_at, :datetime
             t.column :updated_at, :datetime
           end
+
+          create_table :other_games do |t|
+            t.column :name, :string
+            t.column :url_slug, :string
+            t.column :created_at, :datetime
+            t.column :updated_at, :datetime
+          end
         end
       end
 
@@ -31,7 +38,12 @@ module ChangesAreLogged
 
       class ::Game < ActiveRecord::Base
         include ChangesAreLogged
-        after_initialize :automatically_log_changes
+        automatically_log_changes
+      end
+
+      class ::OtherGame < ActiveRecord::Base
+        include ChangesAreLogged
+        automatically_log_changes exclude: %w(name)
       end
     end
 

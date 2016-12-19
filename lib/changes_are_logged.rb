@@ -1,4 +1,4 @@
-require "changes_are_logged/version"
+require 'changes_are_logged/version'
 require 'changes_are_logged/change_log'
 
 module ChangesAreLogged
@@ -22,7 +22,17 @@ module ChangesAreLogged
         @changes_logged = {}
         save_change_log
       elsif self.changed? || !@change_comments.blank?
-        @changes_logged = self.changes
+        exclude_list = self.class.log_changes_options.fetch(:exclude, []).map(&:to_s)
+        include_list = self.class.columns.map(&:name) - exclude_list
+
+        @changes_logged = self.changes.each_with_object({}) do |(attribute, value), ret|
+          ret[attribute] = if include_list.include?(attribute.to_s)
+            value
+          else
+            [nil, 'Attribute changed, but value has been excluded.']
+          end
+        end
+
         @changes_logged.delete("updated_at")
         save_change_log
       end
@@ -30,8 +40,8 @@ module ChangesAreLogged
 
     def save_change_log
       self.change_logs << ChangeLog.new(
-        :changes_logged => @changes_logged, 
-        :user_id        => @modifying_user_id, 
+        :changes_logged => @changes_logged,
+        :user_id        => @modifying_user_id,
         :comments       => @change_comments,
         :user_is_staff  => @modifying_user_is_staff
       )
@@ -43,15 +53,21 @@ module ChangesAreLogged
     def attribute_change(attr)
       [changed_attributes[attr], __send__(:read_attribute, attr)] if attribute_changed?(attr)
     end
+  end
 
-    def automatically_log_changes
-      @log_changes = true
+  module ClassMethods
+    attr_reader :log_changes_options
+
+    def automatically_log_changes(options = {})
+      after_initialize -> { @log_changes = true }
+      @log_changes_options = options
     end
   end
 
   def self.included(klass)
     klass.class_eval do
       include InstanceMethods
+      extend ClassMethods
       attr_accessor :modifying_user_id
       attr_accessor :change_comments
       attr_accessor :log_changes

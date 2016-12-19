@@ -35,21 +35,21 @@ class ChangeLog < ActiveRecord::Base
     return nil unless user_id
     user_is_staff ? StaffUser.find(user_id) : User.find(user_id)
   end
-  
+
   def has_changes?
     changes_logged && changes_logged.any?
   end
-  
+
   def pretty_change_hashes
     changes_logged.map do |k, (from, to)|
       {
-        :key  => k, 
-        :from => self.class.pretty_value(from), 
+        :key  => k,
+        :from => self.class.pretty_value(from),
         :to   => self.class.pretty_value(to)
       }
     end
   end
-  
+
   def self.pretty_value(v)
     if v.nil?
       "(nil)"
@@ -59,5 +59,5 @@ class ChangeLog < ActiveRecord::Base
       v.pretty_inspect
     end
   end
-  
+
 end

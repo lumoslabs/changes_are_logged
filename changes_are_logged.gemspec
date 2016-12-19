@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # specify any dependencies here instead of Gemfile:
-  s.add_development_dependency 'rspec-rails', '2.7.0'
-  s.add_development_dependency 'activerecord', '3.0.11'
-  s.add_development_dependency 'sqlite3', '1.3.4'
+  s.add_development_dependency 'rspec-rails', '~> 2.7'
+  s.add_development_dependency 'activerecord', '~> 4.0'
+  s.add_development_dependency 'sqlite3', '~> 1.3'
 end

@@ -33,6 +33,31 @@ describe 'ChangeLog' do
     end
   end
 
+  context 'Using a model that has excluded certain columns' do
+    before do
+      @game = OtherGame.create
+      @original_change_logs_size = @game.change_logs.size
+      @original_name = @game.name
+      @original_slug = @game.url_slug
+      @game.name = 'shazam!'
+      @game.url_slug = 'shazam'
+      @comment = 'switching to cooler name'
+      @game.change_comments = @comment
+      @game.save!
+    end
+
+    it 'excludes the specified columns' do
+      @game.reload.change_logs.size.should == @original_change_logs_size + 1
+
+      @game.change_logs.last.changes_logged.should == {
+        'name' => [nil, 'Attribute changed, but value has been excluded.'],
+        'url_slug' => [@original_slug, 'shazam']
+      }
+
+      @game.change_logs.last.comments.should == @comment
+    end
+  end
+
   context 'Saving a game with no changes and a blank comment' do
     before do
       @game = Game.create
