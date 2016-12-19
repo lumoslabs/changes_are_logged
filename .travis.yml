@@ -2,6 +2,8 @@ language: ruby
 rvm:
   - 2.3.3
 sudo: false
+cache:
+  - bundler
 notifications:
   email: false
 script: bundle exec rspec
