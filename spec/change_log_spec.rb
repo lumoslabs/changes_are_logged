@@ -46,13 +46,13 @@ describe 'ChangeLog' do
     it_behaves_like 'a change-logging game model', SubclassedGame
   end
 
-  context 'with a model that has filtered out certain columns' do
+  context 'with a model that modifies certain logged values' do
     let(:game) { OtherGame.create.tap { |g| g.change_comments = comment } }
     let(:comment) { 'switching to cooler name' }
     let(:new_attributes) { { name: 'shazam!', url_slug: 'shazam' } }
     let(:change_log) { game.change_logs.last }
 
-    it 'creates a new change log record without the specified columns' do
+    it 'creates a new change log record with modified column values' do
       original_attributes = game.attributes
 
       expect { game.update_attributes(new_attributes) }.to(
@@ -60,7 +60,7 @@ describe 'ChangeLog' do
       )
 
       expect(change_log.changes_logged).to eq(
-        'name'     => [nil, 'Attribute changed, but value has been filtered.'],
+        'name'     => ['old_', 'new_shazam!'],
         'url_slug' => [original_attributes[:url_slug], 'shazam']
       )
     end

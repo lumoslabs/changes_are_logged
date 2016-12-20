@@ -26,7 +26,7 @@ Then any time that object is modified, a new entry in the `change_logs` table wi
 >
 ```
 
-You can specify certain columns whose values you'd rather not store, like complex Ruby objects (think Carrierwave uploaders, etc). Use the `:filter` option:
+You can alter the logged values by passing a block to `automatically_log_changes`, which can be handy if the column contains a complex Ruby object (think Carrierwave uploaders, etc). The block expects you to return a two-element array with the modified old and new values:
 
 ```ruby
 class Game < ActiveRecord::Base
@@ -34,7 +34,11 @@ class Game < ActiveRecord::Base
   mount_uploader :thumbnail, MyApp::MyThumbnailUploader
 
   include ChangesAreLogged
-  automatically_log_changes filter: ['thumbnail']
+  automatically_log_changes do |attribute, old_value, new_value|
+    if attribute == 'thumbnail'
+      [old_value.filename, new_value.filename]
+    end
+  end
 end
 ```
 

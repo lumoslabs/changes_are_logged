@@ -43,7 +43,13 @@ module ChangesAreLogged
 
       class ::OtherGame < ActiveRecord::Base
         include ChangesAreLogged
-        automatically_log_changes filter: %w(name)
+        automatically_log_changes do |attribute, old_value, new_value|
+          if attribute == 'name'
+            ["old_#{old_value}", "new_#{new_value}"]
+          else
+            [old_value, new_value]
+          end
+        end
       end
 
       class ::SubclassedGame < Game

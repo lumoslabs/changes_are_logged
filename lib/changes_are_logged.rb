@@ -22,16 +22,16 @@ module ChangesAreLogged
         @changes_logged = {}
         save_change_log
       elsif changed? || !@change_comments.blank?
-        filter_list = log_changes_options.fetch(:filter, []).map(&:to_s)
-        include_list = self.class.columns.map(&:name) - filter_list
         @changes_logged = HashWithIndifferentAccess.new
 
-        changes.each_with_object(@changes_logged) do |(attribute, value), ret|
-          ret[attribute] = if include_list.include?(attribute.to_s)
-            value
-          else
-            [nil, 'Attribute changed, but value has been filtered.']
+        if log_changes_callback
+          changes.each do |attribute, (old_value, new_value)|
+            @changes_logged[attribute] = log_changes_callback.call(
+              attribute, old_value, new_value
+            )
           end
+        else
+          @changes_logged.merge!(changes)
         end
 
         @changes_logged.delete("updated_at")
@@ -57,10 +57,10 @@ module ChangesAreLogged
   end
 
   module ClassMethods
-    def automatically_log_changes(options = {})
+    def automatically_log_changes(&block)
       after_initialize -> do
         @log_changes = true
-        @log_changes_options = options
+        @log_changes_callback = block
       end
     end
   end
@@ -72,12 +72,9 @@ module ChangesAreLogged
       attr_accessor :modifying_user_id
       attr_accessor :change_comments
       attr_accessor :log_changes
+      attr_reader :log_changes_callback
       before_save :log_it
       has_many :change_logs, :as => :target
-
-      def log_changes_options
-        @log_changes_options || {}
-      end
     end
   end
 end
