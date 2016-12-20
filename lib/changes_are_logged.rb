@@ -17,19 +17,19 @@ module ChangesAreLogged
         end
       end
 
-      if self.new_record?
+      if new_record?
         @change_comments = "new record" if @change_comments.blank?
         @changes_logged = {}
         save_change_log
-      elsif self.changed? || !@change_comments.blank?
-        exclude_list = self.class.log_changes_options.fetch(:exclude, []).map(&:to_s)
-        include_list = self.class.columns.map(&:name) - exclude_list
+      elsif changed? || !@change_comments.blank?
+        filter_list = log_changes_options.fetch(:filter, []).map(&:to_s)
+        include_list = self.class.columns.map(&:name) - filter_list
 
-        @changes_logged = self.changes.each_with_object({}) do |(attribute, value), ret|
+        @changes_logged = changes.each_with_object({}) do |(attribute, value), ret|
           ret[attribute] = if include_list.include?(attribute.to_s)
             value
           else
-            [nil, 'Attribute changed, but value has been excluded.']
+            [nil, 'Attribute changed, but value has been filtered.']
           end
         end
 
@@ -56,11 +56,11 @@ module ChangesAreLogged
   end
 
   module ClassMethods
-    attr_reader :log_changes_options
-
     def automatically_log_changes(options = {})
-      after_initialize -> { @log_changes = true }
-      @log_changes_options = options
+      after_initialize -> do
+        @log_changes = true
+        @log_changes_options = options
+      end
     end
   end
 
@@ -71,6 +71,7 @@ module ChangesAreLogged
       attr_accessor :modifying_user_id
       attr_accessor :change_comments
       attr_accessor :log_changes
+      attr_reader :log_changes_options
       before_save :log_it
       has_many :change_logs, :as => :target
     end

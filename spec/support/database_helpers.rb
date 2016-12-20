@@ -43,7 +43,10 @@ module ChangesAreLogged
 
       class ::OtherGame < ActiveRecord::Base
         include ChangesAreLogged
-        automatically_log_changes exclude: %w(name)
+        automatically_log_changes filter: %w(name)
+      end
+
+      class ::SubclassedGame < Game
       end
     end
 
