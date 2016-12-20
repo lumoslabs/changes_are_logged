@@ -24,8 +24,9 @@ module ChangesAreLogged
       elsif changed? || !@change_comments.blank?
         filter_list = log_changes_options.fetch(:filter, []).map(&:to_s)
         include_list = self.class.columns.map(&:name) - filter_list
+        @changes_logged = HashWithIndifferentAccess.new
 
-        @changes_logged = changes.each_with_object({}) do |(attribute, value), ret|
+        changes.each_with_object(@changes_logged) do |(attribute, value), ret|
           ret[attribute] = if include_list.include?(attribute.to_s)
             value
           else
