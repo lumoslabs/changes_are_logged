@@ -26,6 +26,20 @@ Then any time that object is modified, a new entry in the `change_logs` table wi
 >
 ```
 
+You can specify certain columns whose values you'd rather not store, like complex Ruby objects (think Carrierwave uploaders, etc). Use the `:filter` option:
+
+```ruby
+class Game < ActiveRecord::Base
+  # example carrierwave uploader attached to the 'thumbnail' column
+  mount_uploader :thumbnail, MyApp::MyThumbnailUploader
+
+  include ChangesAreLogged
+  automatically_log_changes filter: ['thumbnail']
+end
+```
+
+Now the value of the `thumbnail` column won't be included if it changes. The text "Attribute changed, but value has been filtered." will be logged instead.
+
 ## Assumptions
 
 The method `current_user` is defined by your app, and returns the user instance that is currently logged in.
