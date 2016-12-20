@@ -71,9 +71,12 @@ module ChangesAreLogged
       attr_accessor :modifying_user_id
       attr_accessor :change_comments
       attr_accessor :log_changes
-      attr_reader :log_changes_options
       before_save :log_it
       has_many :change_logs, :as => :target
+
+      def log_changes_options
+        @log_changes_options || {}
+      end
     end
   end
 end
