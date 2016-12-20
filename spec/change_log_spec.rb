@@ -13,23 +13,56 @@ describe 'ChangeLog' do
     end
   end
 
-  context 'Making changes to a game with change comments' do
-    before do
-      @game = Game.create
-      @original_change_logs_size = @game.change_logs.size
-      @original_name = @game.name
-      @original_slug = @game.url_slug
-      @game.name = 'shazam!'
-      @game.url_slug = 'shazam'
-      @comment = 'switching to cooler name'
-      @game.change_comments = @comment
-      @game.save!
+  shared_examples 'a change-logging game model' do |game_class|
+    let(:game) { game_class.create.tap { |g| g.change_comments = comment } }
+    let(:comment) { 'switching to cooler name' }
+    let(:new_attributes) { { name: 'shazam!', url_slug: 'shazam' } }
+    let(:change_log) { game.change_logs.last }
+
+    it 'creates a new change log record with the correct attributes' do
+      original_attributes = game.attributes
+
+      expect { game.update_attributes(new_attributes) }.to(
+        change { game.change_logs.count }.from(1).to(2)
+      )
+
+      expect(change_log.changes_logged).to eq(
+        'name'     => [original_attributes[:name], new_attributes[:name]],
+        'url_slug' => [original_attributes[:url_slug], new_attributes[:url_slug]]
+      )
     end
 
-    it 'should record the change comments in the change_logs' do
-      @game.reload.change_logs.size.should == @original_change_logs_size + 1
-      @game.change_logs.last.changes_logged.should == {"name" => [@original_name, "shazam!"], "url_slug"=>[@original_slug, "shazam"]}
-      @game.change_logs.last.comments.should == @comment
+    it 'includes the given comment in the change log record' do
+      game.update_attributes(new_attributes)
+      expect(change_log.comments).to eq(comment)
+    end
+  end
+
+  context 'with a standard game model' do
+    it_behaves_like 'a change-logging game model', Game
+  end
+
+  context 'with an STI model' do
+    it_behaves_like 'a change-logging game model', SubclassedGame
+  end
+
+  context 'with a model that modifies certain logged values' do
+    let(:game) { OtherGame.create.tap { |g| g.change_comments = comment } }
+    let(:comment) { 'switching to cooler name' }
+    let(:new_attributes) { { name: 'shazam!', url_slug: 'shazam' } }
+    let(:change_log) { game.change_logs.last }
+
+    it 'creates a new change log record with modified column values' do
+      original_attributes = game.attributes
+
+      expect { game.update_attributes(new_attributes) }.to(
+        change { game.change_logs.count }.from(1).to(2)
+      )
+
+      expect(change_log.changes_logged).to eq(
+        'name'     => ['old_', 'new_shazam!'],
+        'url_slug' => [original_attributes[:url_slug], 'shazam']
+      )
     end
   end
 
