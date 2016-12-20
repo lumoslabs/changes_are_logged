@@ -36,7 +36,7 @@ class Game < ActiveRecord::Base
   include ChangesAreLogged
   automatically_log_changes do |attribute, old_value, new_value|
     if attribute == 'thumbnail'
-      [old_value.filename, new_value.filename]
+      [old_value.filename, new_value.filename]  # or something similar
     end
   end
 end
