@@ -67,7 +67,7 @@ module ChangesAreLogged
       attr_accessor :change_comments
       attr_accessor :log_changes
       attr_reader :log_changes_callback
-      before_save :log_it
+      after_save :log_it
       has_many :change_logs, :as => :target
     end
   end
