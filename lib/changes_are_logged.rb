@@ -48,12 +48,6 @@ module ChangesAreLogged
       )
       @change_comments = nil
     end
-
-    # this modifies dirty.rb behavior.  previously #changes returned the change in the accessor method
-    # now, #changes will return raw changes made to actual database attributes
-    def attribute_change(attr)
-      [changed_attributes[attr], __send__(:read_attribute, attr)] if attribute_changed?(attr)
-    end
   end
 
   module ClassMethods
@@ -73,7 +67,7 @@ module ChangesAreLogged
       attr_accessor :change_comments
       attr_accessor :log_changes
       attr_reader :log_changes_callback
-      before_save :log_it
+      after_save :log_it
       has_many :change_logs, :as => :target
     end
   end
