@@ -21,17 +21,17 @@ module ChangesAreLogged
         @change_comments = "new record" if @change_comments.blank?
         @changes_logged = {}
         save_change_log
-      elsif changed? || !@change_comments.blank?
+      elsif saved_changes? || !@change_comments.blank?
         @changes_logged = HashWithIndifferentAccess.new
 
         if log_changes_callback
-          changes.each do |attribute, (old_value, new_value)|
+          saved_changes.each do |attribute, (old_value, new_value)|
             @changes_logged[attribute] = log_changes_callback.call(
               attribute, old_value, new_value
             )
           end
         else
-          @changes_logged.merge!(changes)
+          @changes_logged.merge!(saved_changes)
         end
 
         @changes_logged.delete("updated_at")
