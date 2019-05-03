@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here instead of Gemfile:
   s.add_development_dependency 'rspec-rails', '~> 3.0'
-  s.add_development_dependency 'sqlite3', '~> 1.3'
+  s.add_development_dependency 'sqlite3', '~> 1.3.6'
 end
