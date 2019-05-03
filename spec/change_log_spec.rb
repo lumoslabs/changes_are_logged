@@ -5,18 +5,18 @@ describe 'ChangeLog' do
     before do
       @game = Game.create
       @original_change_logs_size = @game.change_logs.size
-      @game.update_attribute(:name, 'shazam!')
+      @game.update_attribute(:name, 'shazzam!')
     end
 
     it 'should add an entry to the change_logs' do
-      @game.reload.change_logs.size.should == @original_change_logs_size + 1
+      expect(@game.reload.change_logs.size).to eq(@original_change_logs_size + 1)
     end
   end
 
   shared_examples 'a change-logging game model' do |game_class|
     let(:game) { game_class.create.tap { |g| g.change_comments = comment } }
     let(:comment) { 'switching to cooler name' }
-    let(:new_attributes) { { name: 'shazam!', url_slug: 'shazam' } }
+    let(:new_attributes) { { name: 'shazam!!!', url_slug: 'shazam' } }
     let(:change_log) { game.change_logs.last }
 
     it 'creates a new change log record with the correct attributes' do
@@ -27,7 +27,7 @@ describe 'ChangeLog' do
       )
 
       expect(change_log.changes_logged).to eq(
-        'name'     => [original_attributes[:name], new_attributes[:name]],
+        'name'     => ['shazzam!', new_attributes[:name]],
         'url_slug' => [original_attributes[:url_slug], new_attributes[:url_slug]]
       )
     end
@@ -75,7 +75,7 @@ describe 'ChangeLog' do
     end
 
     it 'should not log anything' do
-      @game.reload.change_logs.size.should == @original_change_logs_size
+      expect(@game.reload.change_logs.size).to eq(@original_change_logs_size)
     end
   end
 
@@ -88,9 +88,9 @@ describe 'ChangeLog' do
     end
 
     it 'should log the comment and indicate no changes' do
-      @game.reload.change_logs.size.should == @original_change_logs_size + 1
-      @game.change_logs.last.changes_logged.should == {}
-      @game.change_logs.last.comments.should == "commenting on a non-change"
+      expect(@game.reload.change_logs.size).to eq(@original_change_logs_size + 1)
+      expect(@game.change_logs.last.changes_logged).to eq({})
+      expect(@game.change_logs.last.comments).to eq("commenting on a non-change")
     end
   end
 end
