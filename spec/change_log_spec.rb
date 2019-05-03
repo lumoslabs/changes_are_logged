@@ -9,7 +9,7 @@ describe 'ChangeLog' do
     end
 
     it 'should add an entry to the change_logs' do
-      @game.reload.change_logs.size.should == @original_change_logs_size + 1
+      expect(@game.reload.change_logs.size).to eq(@original_change_logs_size + 1)
     end
   end
 
@@ -75,7 +75,7 @@ describe 'ChangeLog' do
     end
 
     it 'should not log anything' do
-      @game.reload.change_logs.size.should == @original_change_logs_size
+      expect(@game.reload.change_logs.size).to eq(@original_change_logs_size)
     end
   end
 
@@ -88,9 +88,9 @@ describe 'ChangeLog' do
     end
 
     it 'should log the comment and indicate no changes' do
-      @game.reload.change_logs.size.should == @original_change_logs_size + 1
-      @game.change_logs.last.changes_logged.should == {}
-      @game.change_logs.last.comments.should == "commenting on a non-change"
+      expect(@game.reload.change_logs.size).to eq(@original_change_logs_size + 1)
+      expect(@game.change_logs.last.changes_logged).to eq({})
+      expect(@game.change_logs.last.comments).to eq("commenting on a non-change")
     end
   end
 end

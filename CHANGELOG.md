@@ -1,3 +1,6 @@
+# 1.2.0
+* Add Rails 5 compatibility
+
 # 1.1.0
 * Don't monkey patch 'attribute_change' method from ActiveModel::Dirty
 

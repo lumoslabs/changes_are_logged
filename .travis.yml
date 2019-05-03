@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 2.3.3
+  - 2.5.3
 sudo: false
 cache:
   - bundler
@@ -8,7 +8,7 @@ notifications:
   email: false
 script: bundle exec rspec
 env:
-  - RAILS_VERSION='~> 4.0.0'
-  - RAILS_VERSION='~> 4.1.0'
   - RAILS_VERSION='~> 4.2.0'
-  - RAILS_VERSION='~> 5.0.0'
+  - RAILS_VERSION='~> 5.0.7'
+  - RAILS_VERSION='~> 5.1.7'
+  - RAILS_VERSION='~> 5.2.3
