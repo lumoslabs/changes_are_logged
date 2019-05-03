@@ -21,17 +21,18 @@ module ChangesAreLogged
         @change_comments = "new record" if @change_comments.blank?
         @changes_logged = {}
         save_change_log
-      elsif saved_changes? || !@change_comments.blank?
+      elsif (ActiveRecord::VERSION::STRING >= '5.1' ? saved_changes? : changed?) || !@change_comments.blank?
         @changes_logged = HashWithIndifferentAccess.new
 
+        ar_version_changes = ActiveRecord::VERSION::STRING >= '5.1' ? saved_changes : changes
         if log_changes_callback
-          saved_changes.each do |attribute, (old_value, new_value)|
+          ar_version_changes.each do |attribute, (old_value, new_value)|
             @changes_logged[attribute] = log_changes_callback.call(
               attribute, old_value, new_value
             )
           end
         else
-          @changes_logged.merge!(saved_changes)
+          @changes_logged.merge!(ar_version_changes)
         end
 
         @changes_logged.delete("updated_at")
