@@ -5,7 +5,7 @@ describe 'ChangeLog' do
     before do
       @game = Game.create
       @original_change_logs_size = @game.change_logs.size
-      @game.update_attribute(:name, 'shazzam!')
+      @game.update_attribute(:name, 'shazam!')
     end
 
     it 'should add an entry to the change_logs' do
@@ -27,7 +27,7 @@ describe 'ChangeLog' do
       )
 
       expect(change_log.changes_logged).to eq(
-        'name'     => ['shazzam!', new_attributes[:name]],
+        'name'     => [original_attributes[:name], new_attributes[:name]],
         'url_slug' => [original_attributes[:url_slug], new_attributes[:url_slug]]
       )
     end
