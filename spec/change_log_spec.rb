@@ -16,7 +16,7 @@ describe 'ChangeLog' do
   shared_examples 'a change-logging game model' do |game_class|
     let(:game) { game_class.create.tap { |g| g.change_comments = comment } }
     let(:comment) { 'switching to cooler name' }
-    let(:new_attributes) { { name: 'shazam!!!', url_slug: 'shazam' } }
+    let(:new_attributes) { { name: 'shazam!', url_slug: 'shazam' } }
     let(:change_log) { game.change_logs.last }
 
     it 'creates a new change log record with the correct attributes' do
