@@ -22,7 +22,7 @@ module ChangesAreLogged
         @changes_logged = {}
         save_change_log
       elsif (ActiveRecord::VERSION::STRING >= '5.1' ? saved_changes? : changed?) || !@change_comments.blank?
-        @changes_logged = HashWithIndifferentAccess.new
+        @changes_logged = ActiveSupport::HashWithIndifferentAccess.new
 
         ar_version_changes = ActiveRecord::VERSION::STRING >= '5.1' ? saved_changes : changes
         if log_changes_callback
