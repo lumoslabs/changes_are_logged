@@ -1,3 +1,6 @@
+# 1.2.1
+* Replace HashWithIndifferentAccess with ActiveSupport::HashWithIndifferentAccess.
+
 # 1.2.0
 * Add Rails 5 compatibility
 
