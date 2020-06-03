@@ -22,7 +22,7 @@ describe 'ChangeLog' do
     it 'creates a new change log record with the correct attributes' do
       original_attributes = game.attributes
 
-      expect { game.update_attributes(new_attributes) }.to(
+      expect { game.update(new_attributes) }.to(
         change { game.change_logs.count }.from(1).to(2)
       )
 
@@ -33,7 +33,7 @@ describe 'ChangeLog' do
     end
 
     it 'includes the given comment in the change log record' do
-      game.update_attributes(new_attributes)
+      game.update(new_attributes)
       expect(change_log.comments).to eq(comment)
     end
   end
@@ -55,7 +55,7 @@ describe 'ChangeLog' do
     it 'creates a new change log record with modified column values' do
       original_attributes = game.attributes
 
-      expect { game.update_attributes(new_attributes) }.to(
+      expect { game.update(new_attributes) }.to(
         change { game.change_logs.count }.from(1).to(2)
       )
 
